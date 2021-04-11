@@ -11,7 +11,7 @@ const Home = () => {
     useEffect(() => {
         loadAllProducts();
     }, [])
-
+    
     const loadAllProducts = () => {
         setLoading(true);
         getProductsByCount(3).then((res) => {

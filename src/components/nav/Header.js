@@ -45,10 +45,6 @@ const Header = () => {
                 <Link to="/">Home</Link>
             </Item>
 
-            <Item key="shop" icon={<ShoppingOutlined />}>
-                <Link to="/shop">Shop</Link>
-            </Item>
-
             <Item key="cart" icon={<ShoppingCartOutlined />}>
                 <Link to="/cart">
                     <Badge>
