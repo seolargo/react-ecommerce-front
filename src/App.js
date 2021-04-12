@@ -7,6 +7,7 @@ import { auth } from "./firebase";
 import { useDispatch } from "react-redux";
 import { currentUser } from "./functions/auth";
 import { LoadingOutlined } from "@ant-design/icons";
+import ReactCursorPosition, { INTERACTIONS } from 'react-cursor-position';
 
 const SubUpdate = lazy(() => import("./pages/admin/sub/SubUpdate"));
 const ProductCreate = lazy(() => import("./pages/admin/product/ProductCreate"));
@@ -44,60 +45,53 @@ dotenv.config();
 const App = () => {
   const dispatch = useDispatch();
 
-  const [data, setData] = useState([
-    { path: window.location.pathname, x: 0, y: 0, time: 1 },
-  ]);
+  const PositionLabel = (props) => {
+    const {
+      detectedEnvironment: {
+        isMouseDetected = false,
+        isTouchDetected = false
+      } = {},
+      elementDimensions: {
+        width = 0,
+        height = 0
+      } = {},
+      isActive = false,
+      isPositionOutside = false,
+      position: {
+        x = 0,
+        y = 0
+      } = {},
+      hoverDelayInMs = 0,
+      hoverOffDelayInMs = 0,
+      isEnabled = true,
+      pressDurationInMs = 500,
+      pressMoveThreshold = 5,
+      tapDurationInMs = 180,
+      tapMoveThreshold = 5
+    } = props;
 
-  /**
-   *
-   * type: 0 -> mouse movement
-   * type: 1 -> button click
-   */
-  const handleMouseMove = (e) => {
-    e.persist();
-    setData([
-      ...data,
-      {
-        time: Date.now(),
-        path: window.location.pathname,
-        x: e.clientX,
-        y: e.clientY,
-        type: 0,
-      },
-    ]);
+    return (
+      <div className="example__label">
+        {`x: ${x}`}<br />
+        {`y: ${y}`}<br />
+        {`width:: ${width}`}<br />
+        {`height: ${height}`}<br />
+        {`isActive: ${isActive}`}<br />
+        {`isPositionOutside: ${isPositionOutside ? 'true' : 'false'}`}<br />
+        {`isMouseDetected: ${isMouseDetected ? 'true' : 'false'}`}<br />
+        {`isTouchDetected: ${isTouchDetected ? 'true' : 'false'}`}<br />
+        {`hoverDelayInMs: ${hoverDelayInMs ? 'true' : 'false'}`}
+        {`hoverOffDelayInMs: ${hoverOffDelayInMs}`}<br />
+        {`isEnabled: ${isEnabled ? 'true' : 'false'}`}<br />
+        {`pressDurationInMs: ${pressDurationInMs}`}<br />
+        {`pressMoveThreshold: ${pressMoveThreshold}`}<br />
+        {`tapDurationInMs: ${tapDurationInMs}`}<br />
+        {`tapMoveThreshold: ${tapMoveThreshold}`}<br />
+      </div>
+    );
   };
 
-  const handleMouseClick = (e) => {
-    e.persist();
-    setData([
-      ...data,
-      {
-        time: Date.now(),
-        path: window.location.pathname,
-        x: e.clientX,
-        y: e.clientY,
-        type: 1,
-      },
-    ]);
-  };
-
-  const doSomethingBeforeUnload = async () => {
-    /**
-     * mouse movement post request
-     */
-  };
-
-  const setupBeforeUnloadListener = () => {
-    window.addEventListener("beforeunload", (ev) => {
-      ev.preventDefault();
-      return doSomethingBeforeUnload();
-    });
-    alert("Siteden çıkış yapıyorsunuz onaylıyor musunuz?");
-  };
-
-  //to check firebase auth state
   useEffect(() => {
-    setupBeforeUnloadListener();
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const idTokenResult = await user.getIdTokenResult();
@@ -123,12 +117,9 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <div
-      className="rootContainer"
-      onMouseMove={(e) => handleMouseMove(e)}
-      onClick={(e) => handleMouseClick(e)}
-    >
-      <Suspense
+    <ReactCursorPosition className='example' activationInteractionMouse={INTERACTIONS.CLICK}>
+      <PositionLabel />
+      <Suspense 
         fallback={
           <div className="col text-center p-5">
             __ React Redux ECO
@@ -172,7 +163,7 @@ const App = () => {
           <Route exact path="/shop" component={Shop} />
         </Switch>
       </Suspense>
-    </div>
+      </ReactCursorPosition>
   );
 };
 
