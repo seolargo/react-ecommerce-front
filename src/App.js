@@ -8,6 +8,13 @@ import { useDispatch } from "react-redux";
 import { currentUser } from "./functions/auth";
 import { LoadingOutlined } from "@ant-design/icons";
 import ReactCursorPosition, { INTERACTIONS } from "react-cursor-position";
+import ReactInputPosition from "react-input-position";
+
+import ReactInputPosition, {
+  MOUSE_ACTIVATION,
+  TOUCH_ACTIVATION,
+  defaultState,
+} from "react-input-position";
 
 const SubUpdate = lazy(() => import("./pages/admin/sub/SubUpdate"));
 const ProductCreate = lazy(() => import("./pages/admin/product/ProductCreate"));
@@ -48,7 +55,24 @@ const App = () => {
     { path: window.location.pathname, x: 0, y: 0, time: 0.0, type: 0 },
   ]);
 
-  const [externalIsActive,setExternalIsActive] = useState(false)
+  const [externalIsActive, setExternalIsActive] = useState(false);
+
+  const onUpdate = (stateChanges) => {
+    console.log(stateChanges);
+    /*setData([
+      ...data,
+      {
+        time: Date.now(),
+        path: window.location.pathname,
+        x: x,
+        y: y,
+        type: externalIsActive !== isActive ? 1 : 0,
+      },
+    ]);
+    if (externalIsActive !== isActive) {
+      setExternalIsActive(isActive);
+    }*/
+  };
   const PositionLabel = (props) => {
     const {
       detectedEnvironment: {
@@ -78,7 +102,7 @@ const App = () => {
         type: externalIsActive !== isActive ? 1 : 0,
       },
     ]);
-    if(externalIsActive !== isActive){
+    if (externalIsActive !== isActive) {
       setExternalIsActive(isActive);
     }
     return (
@@ -142,11 +166,14 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <ReactCursorPosition
-      className="example"
-      activationInteractionMouse={INTERACTIONS.CLICK}
-    >
-      <PositionLabel />
+    <div>
+      <ReactInputPoisiton
+        mouseActivationMethod={MOUSE_ACTIVATION.DOUBLE_CLICK}
+        touchActivationMethod={TOUCH_ACTIVATION.DOUBLE_TAP}
+        overrideState={this.state}
+        onUpdate={this.onUpdate}
+      />
+
       <Suspense
         fallback={
           <div className="col text-center p-5">
@@ -191,7 +218,7 @@ const App = () => {
           <Route exact path="/shop" component={Shop} />
         </Switch>
       </Suspense>
-    </ReactCursorPosition>
+    </div>
   );
 };
 
