@@ -7,7 +7,7 @@ import { auth } from "./firebase";
 import { useDispatch } from "react-redux";
 import { currentUser } from "./functions/auth";
 import { LoadingOutlined } from "@ant-design/icons";
-import ReactCursorPosition, { INTERACTIONS } from 'react-cursor-position';
+import ReactCursorPosition, { INTERACTIONS } from "react-cursor-position";
 
 const SubUpdate = lazy(() => import("./pages/admin/sub/SubUpdate"));
 const ProductCreate = lazy(() => import("./pages/admin/product/ProductCreate"));
@@ -44,49 +44,74 @@ dotenv.config();
 
 const App = () => {
   const dispatch = useDispatch();
+  const [data, setData] = useState([
+    { path: window.location.pathname, x: 0, y: 0, time: 0.0, type: 0 },
+  ]);
 
+  const [externalIsActive,setExternalIsActive] = useState(false)
   const PositionLabel = (props) => {
     const {
       detectedEnvironment: {
         isMouseDetected = false,
-        isTouchDetected = false
+        isTouchDetected = false,
       } = {},
-      elementDimensions: {
-        width = 0,
-        height = 0
-      } = {},
+      elementDimensions: { width = 0, height = 0 } = {},
       isActive = false,
       isPositionOutside = false,
-      position: {
-        x = 0,
-        y = 0
-      } = {},
+      position: { x = 0, y = 0 } = {},
       hoverDelayInMs = 0,
       hoverOffDelayInMs = 0,
       isEnabled = true,
       pressDurationInMs = 500,
       pressMoveThreshold = 5,
       tapDurationInMs = 180,
-      tapMoveThreshold = 5
+      tapMoveThreshold = 5,
     } = props;
 
+    setData([
+      ...data,
+      {
+        time: Date.now(),
+        path: window.location.pathname,
+        x: x,
+        y: y,
+        type: externalIsActive !== isActive ? 1 : 0,
+      },
+    ]);
+    if(externalIsActive !== isActive){
+      setExternalIsActive(isActive);
+    }
     return (
       <div className="example__label">
-        {`x: ${x}`}<br />
-        {`y: ${y}`}<br />
-        {`width:: ${width}`}<br />
-        {`height: ${height}`}<br />
-        {`isActive: ${isActive}`}<br />
-        {`isPositionOutside: ${isPositionOutside ? 'true' : 'false'}`}<br />
-        {`isMouseDetected: ${isMouseDetected ? 'true' : 'false'}`}<br />
-        {`isTouchDetected: ${isTouchDetected ? 'true' : 'false'}`}<br />
-        {`hoverDelayInMs: ${hoverDelayInMs ? 'true' : 'false'}`}
-        {`hoverOffDelayInMs: ${hoverOffDelayInMs}`}<br />
-        {`isEnabled: ${isEnabled ? 'true' : 'false'}`}<br />
-        {`pressDurationInMs: ${pressDurationInMs}`}<br />
-        {`pressMoveThreshold: ${pressMoveThreshold}`}<br />
-        {`tapDurationInMs: ${tapDurationInMs}`}<br />
-        {`tapMoveThreshold: ${tapMoveThreshold}`}<br />
+        {`x: ${x}`}
+        <br />
+        {`y: ${y}`}
+        <br />
+        {`width:: ${width}`}
+        <br />
+        {`height: ${height}`}
+        <br />
+        {`isActive: ${isActive}`}
+        <br />
+        {`isPositionOutside: ${isPositionOutside ? "true" : "false"}`}
+        <br />
+        {`isMouseDetected: ${isMouseDetected ? "true" : "false"}`}
+        <br />
+        {`isTouchDetected: ${isTouchDetected ? "true" : "false"}`}
+        <br />
+        {`hoverDelayInMs: ${hoverDelayInMs ? "true" : "false"}`}
+        {`hoverOffDelayInMs: ${hoverOffDelayInMs}`}
+        <br />
+        {`isEnabled: ${isEnabled ? "true" : "false"}`}
+        <br />
+        {`pressDurationInMs: ${pressDurationInMs}`}
+        <br />
+        {`pressMoveThreshold: ${pressMoveThreshold}`}
+        <br />
+        {`tapDurationInMs: ${tapDurationInMs}`}
+        <br />
+        {`tapMoveThreshold: ${tapMoveThreshold}`}
+        <br />
       </div>
     );
   };
@@ -117,9 +142,12 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <ReactCursorPosition className='example' activationInteractionMouse={INTERACTIONS.CLICK}>
+    <ReactCursorPosition
+      className="example"
+      activationInteractionMouse={INTERACTIONS.CLICK}
+    >
       <PositionLabel />
-      <Suspense 
+      <Suspense
         fallback={
           <div className="col text-center p-5">
             __ React Redux ECO
@@ -163,7 +191,7 @@ const App = () => {
           <Route exact path="/shop" component={Shop} />
         </Switch>
       </Suspense>
-      </ReactCursorPosition>
+    </ReactCursorPosition>
   );
 };
 
